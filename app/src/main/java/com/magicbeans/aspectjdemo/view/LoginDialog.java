@@ -1,5 +1,6 @@
 package com.magicbeans.aspectjdemo.view;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;

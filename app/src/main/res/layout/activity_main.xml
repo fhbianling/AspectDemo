@@ -24,19 +24,26 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:onClick="onClick"
-        android:text="button" />
+        android:text="FastClickAOP" />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         android:onClick="onClick2"
-        android:text="button2" />
+        android:text="DebugAOP" />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         android:onClick="onClick3"
-        android:text="loginCheckAOPTest" />
+        android:text="LoginCheckAOP" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:onClick="onClick4"
+        android:text="PermissionCheckAOP" />
 </LinearLayout>

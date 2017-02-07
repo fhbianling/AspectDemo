@@ -1,5 +1,6 @@
 package com.magicbeans.aspectjdemo.aty;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import com.magicbeans.aspectjdemo.R;
 import com.magicbeans.aspectjdemo.debug.DebugLog;
 import com.magicbeans.aspectjdemo.fastclick.FastClick;
 import com.magicbeans.aspectjdemo.logincheck.LoginCheck;
+import com.magicbeans.aspectjdemo.permission.PermissionCheck;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,14 +33,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @DebugLog(DebugLog.I)
+    @FastClick(type = FastClick.FilterType.Invocking)
+    public void onClick2(View v){
+        startActivity(new Intent(this,SecondActivity.class));
+    }
+
     @LoginCheck
     public void onClick3(View view) {
 
     }
 
-    @DebugLog(DebugLog.I)
-    @FastClick(type = FastClick.FilterType.Invocking)
-    public void onClick2(View v){
-        startActivity(new Intent(this,SecondActivity.class));
+    @PermissionCheck(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    public void onClick4(View view){
+
     }
 }
