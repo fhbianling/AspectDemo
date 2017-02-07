@@ -5,6 +5,8 @@ import android.os.Looper;
 import android.os.Trace;
 import android.util.Log;
 
+import com.magicbeans.aspectjdemo.BuildConfig;
+
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -43,7 +45,7 @@ public class DebugLogAspect {
     public void constructor() {
     }
 
-    private volatile static boolean enabled = true;
+    private volatile static boolean enabled = BuildConfig.DEBUG;
 
     public static void setEnabled(boolean enabled) {
         DebugLogAspect.enabled = enabled;
@@ -52,7 +54,7 @@ public class DebugLogAspect {
     @Around("method() || constructor()")
     public Object logAndExecute(ProceedingJoinPoint joinPoint) throws Throwable {
 
-        int level = calcDebugLevel(joinPoint);
+        int level = getDebugLevel(joinPoint);
 
         enterMethod(level, joinPoint);
         long startNanos = System.nanoTime();
@@ -64,7 +66,7 @@ public class DebugLogAspect {
         return result;
     }
 
-    private static int calcDebugLevel(ProceedingJoinPoint joinPoint) {
+    private static int getDebugLevel(ProceedingJoinPoint joinPoint) {
         Signature signature = joinPoint.getSignature();
         MethodSignature methodSignature = (MethodSignature) signature;
         Method method = methodSignature.getMethod();

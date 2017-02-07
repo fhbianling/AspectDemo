@@ -31,4 +31,5 @@ public class SecondActivity extends AppCompatActivity{
     public void onClick2(View view) {
 
     }
+
 }

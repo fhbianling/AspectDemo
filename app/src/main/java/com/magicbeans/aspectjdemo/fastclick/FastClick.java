@@ -8,7 +8,9 @@ import java.lang.annotation.Target;
 /**
  * author 边凌
  * date 2017/1/19 15:53
- * desc ${TODO}
+ * desc ${快速点击过滤器注解}
+ * <p>
+ * 对应切面{@link FastClickAspect}
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

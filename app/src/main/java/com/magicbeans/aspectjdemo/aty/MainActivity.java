@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.magicbeans.aspectjdemo.R;
 import com.magicbeans.aspectjdemo.debug.DebugLog;
 import com.magicbeans.aspectjdemo.fastclick.FastClick;
+import com.magicbeans.aspectjdemo.logincheck.LoginCheck;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,6 +28,12 @@ public class MainActivity extends AppCompatActivity {
     public void onClick(View view) {
         count++;
         tv.setText("onClick:" + count);
+    }
+
+
+    @LoginCheck
+    public void onClick3(View view) {
+
     }
 
     @DebugLog(DebugLog.I)

@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * 打印的信息包括方法参数值，返回值，
  * 方法耗时
  * 可传参设置日志等级
- * 调用{@link DebugLogAspect#setEnabled(boolean)}方法可关闭日志输出
+ * 注意，调用{@link DebugLogAspect#setEnabled(boolean)}方法可关闭日志输出
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

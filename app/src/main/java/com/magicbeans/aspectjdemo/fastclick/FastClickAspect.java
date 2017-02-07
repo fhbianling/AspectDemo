@@ -1,13 +1,11 @@
 package com.magicbeans.aspectjdemo.fastclick;
 
-import android.util.Log;
 import android.util.LongSparseArray;
 import android.view.View;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 
@@ -19,53 +17,78 @@ import java.lang.reflect.Method;
  * desc ${TODO}
  */
 @Aspect
-public class FastClickAspect {
+class FastClickAspect {
     @Pointcut("execution(@com.magicbeans.aspectjdemo.fastclick.FastClick * *(..))")
     public void withFastClick() {
     }
 
+    private static LongSparseArray<Long> clickTimeStamp = new LongSparseArray<>();
     @Around("withFastClick()")
     public void fastClick(ProceedingJoinPoint joinPoint) throws Throwable {
-        Object[] args = joinPoint.getArgs();
-        boolean checkParameter = false;
-        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-        Method method = methodSignature.getMethod();
-        long value = FastClick.DEFAULT_INTERVAL;
-        FastClick.FilterType type = FastClick.FilterType.Click;
-        if (method.isAnnotationPresent(FastClick.class)) {
-            FastClick annotation = method.getAnnotation(FastClick.class);
-            value = annotation.value();
-            type = annotation.type();
-        }
-        for (Object arg : args) {
+
+        ClickConfig clickConfig = new ClickConfig(joinPoint).invoke();
+        long clickInterval = clickConfig.getClickInterval();
+        FastClick.FilterType filterType = clickConfig.getFilterType();
+
+        boolean viewArgsExist = false;
+
+        for (Object arg : joinPoint.getArgs()) {
             if (arg instanceof View) {
-                checkParameter = true;
-                if (processView((View) arg, value)) {
-                    joinPoint.proceed();
-                    if (type == FastClick.FilterType.Invocking) {
-                        array.put(arg.hashCode(), 0L);
-                    }
-                }
+                viewArgsExist = true;
+                proceedClickAndUpdateClickTimeStamp(joinPoint, clickInterval, filterType, arg);
             }
         }
 
-        if (!checkParameter) {
+        if (!viewArgsExist) {
             throw new IllegalArgumentException("被FastClick注解的方法必须有至少一个View参数");
         }
     }
 
-    private static LongSparseArray<Long> array = new LongSparseArray<>();
-
-    private boolean processView(View arg, long defaultInterval) {
-        Long old = array.get(arg.hashCode());
-
-        long now = System.currentTimeMillis();
-
-        array.put(arg.hashCode(), now);
-        if (old == null) {
-            array.put(arg.hashCode(), now);
-            return true;
+    private void proceedClickAndUpdateClickTimeStamp(ProceedingJoinPoint joinPoint, long clickInterval, FastClick.FilterType filterType, Object arg) throws Throwable {
+        int key = arg.hashCode();
+        Long old= clickTimeStamp.get(key);
+        long now=System.currentTimeMillis();
+        if(old==null||now-old>=clickInterval){
+            //非快速点击则执行点击事件
+            joinPoint.proceed();
+            if(filterType== FastClick.FilterType.Invocking){
+                clickTimeStamp.put(key,0L);
+            }else {
+                clickTimeStamp.put(key,now);
+            }
         }
-        return now - old >= defaultInterval;
+    }
+
+    private class ClickConfig {
+        private ProceedingJoinPoint joinPoint;
+        private long clickInterval;
+        private FastClick.FilterType filterType;
+
+        private ClickConfig(ProceedingJoinPoint joinPoint) {
+            this.joinPoint = joinPoint;
+        }
+
+        private long getClickInterval() {
+            return clickInterval;
+        }
+
+        private FastClick.FilterType getFilterType() {
+            return filterType;
+        }
+
+        private ClickConfig invoke() {
+            MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+            Method method = methodSignature.getMethod();
+
+            clickInterval = FastClick.DEFAULT_INTERVAL;
+            filterType = FastClick.FilterType.Click;
+
+            if (method.isAnnotationPresent(FastClick.class)) {
+                FastClick annotation = method.getAnnotation(FastClick.class);
+                clickInterval = annotation.value();
+                filterType = annotation.type();
+            }
+            return this;
+        }
     }
 }
